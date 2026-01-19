@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Maison Vital - Chrono Edition</title>
+
+    <!-- External Libraries (Tailwind, FontAwesome, Google Fonts) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="mobile-frame">
+      <!-- === STEP 1: INVENTORY (ONBOARDING) === -->
+      <div
+        id="view-setup"
+        class="absolute inset-0 z-50 bg-slate-50 flex flex-col"
+      >
+        <div class="px-6 py-8">
+          <h1 class="font-heading font-bold text-2xl text-slate-900 mb-2">
+            Inventaire
+          </h1>
+          <p class="text-slate-500 text-sm">
+            Quels équipements possédez-vous ?
+          </p>
+        </div>
+
+        <!-- Grid Container (Populated by JS) -->
+        <div class="flex-1 overflow-y-auto px-6 pb-24">
+          <div id="setup-grid" class="grid grid-cols-2 gap-4">
+            <!-- Les cartes seront injectées ici par app.js -->
+          </div>
+        </div>
+
+        <!-- Start Button -->
+        <div
+          class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent"
+        >
+          <button
+            onclick="startReview()"
+            class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold font-heading text-lg shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+          >
+            Lancer le Diagnostic <i class="fa-solid fa-stopwatch"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- === STEP 2: CHRONO DIAGNOSTIC (REVIEW) === -->
+      <div
+        id="view-review"
+        class="absolute inset-0 z-40 bg-slate-100 hidden flex flex-col"
+      >
+        <!-- Progress Header -->
+        <div
+          class="px-6 pt-6 pb-2 flex justify-between items-center bg-transparent z-10"
+        >
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-slate-900"></span>
+            <span
+              class="text-xs font-bold text-slate-900 uppercase tracking-wider"
+              id="progress-text"
+              >1 / 5</span
+            >
+          </div>
+          <div
+            class="text-xs font-bold text-slate-400 bg-white px-3 py-1 rounded-full shadow-sm flex items-center gap-1"
+          >
+            <i class="fa-regular fa-clock"></i>
+            <span id="time-estimate">10 min</span>
+          </div>
+        </div>
+
+        <!-- 3D Card Scene -->
+        <div class="scene">
+          <div class="card-container" id="active-card">
+            <!-- FRONT: THE TIME QUESTION -->
+            <div
+              class="card-face card-front relative flex flex-col transition-colors duration-300"
+            >
+              <div class="flex-1 flex flex-col items-center justify-center p-6">
+                <!-- Frequency Badge -->
+                <div
+                  class="mb-6 bg-slate-100 px-3 py-1 rounded-full text-xs font-bold text-slate-500 uppercase tracking-wide"
+                >
+                  À faire tous les
+                  <span id="card-freq" class="text-slate-900">3 mois</span>
+                </div>
+
+                <!-- Icon Container -->
+                <div
+                  class="w-28 h-28 rounded-full bg-white flex items-center justify-center mb-6 shadow-lg shadow-slate-200 border border-slate-50 relative"
+                >
+                  <i
+                    class="fa-solid fa-shower text-5xl text-slate-700"
+                    id="card-icon"
+                  ></i>
+                  <!-- Alert Badge (Hidden by default) -->
+                  <div
+                    id="alert-badge"
+                    class="absolute -top-1 -right-1 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white shadow-md scale-0 transition-transform duration-300"
+                  >
+                    <i class="fa-solid fa-exclamation"></i>
+                  </div>
+                </div>
+
+                <h2
+                  class="font-heading font-bold text-3xl text-slate-900 mb-2 text-center"
+                  id="card-title"
+                >
+                  Pommeau
+                </h2>
+                <p class="text-slate-500 text-sm text-center px-4 mb-8">
+                  Dernier entretien complet ?
+                </p>
+
+                <!-- Time Inputs Buttons -->
+                <div class="w-full grid grid-cols-2 gap-3 mb-6">
+                  <button
+                    onclick="selectTime('now')"
+                    class="time-btn py-4 rounded-xl flex flex-col items-center justify-center bg-white hover:bg-emerald-50 hover:border-emerald-200 group"
+                  >
+                    <span
+                      class="text-xl mb-1 group-hover:scale-110 transition-transform"
+                      >✨</span
+                    >
+                    <span
+                      class="text-xs font-bold text-slate-600 group-hover:text-emerald-600"
+                      >Toujours Nickel</span
+                    >
+                  </button>
+                  <button
+                    onclick="selectTime('recent')"
+                    class="time-btn py-4 rounded-xl flex flex-col items-center justify-center bg-white"
+                  >
+                    <span
+                      class="text-xs font-bold text-slate-900 block mb-1"
+                      id="btn-recent-label"
+                      >< 3 mois</span
+                    >
+                    <span class="text-[10px] text-slate-400"
+                      >Dans les temps</span
+                    >
+                  </button>
+                  <button
+                    onclick="selectTime('old')"
+                    class="time-btn py-4 rounded-xl flex flex-col items-center justify-center bg-white"
+                  >
+                    <span
+                      class="text-xs font-bold text-slate-900 block mb-1"
+                      id="btn-old-label"
+                      >> 6 mois</span
+                    >
+                    <span class="text-[10px] text-slate-400"
+                      >Ça commence à dater</span
+                    >
+                  </button>
+                  <button
+                    onclick="selectTime('never')"
+                    class="time-btn py-4 rounded-xl flex flex-col items-center justify-center bg-white hover:bg-red-50 hover:border-red-200 group"
+                  >
+                    <span
+                      class="text-xl mb-1 group-hover:scale-110 transition-transform"
+                      >🕸️</span
+                    >
+                    <span
+                      class="text-xs font-bold text-slate-600 group-hover:text-red-600"
+                      >Jamais / Oublié</span
+                    >
+                  </button>
+                </div>
+              </div>
+
+              <!-- Action Zone (Hidden until selection) -->
+              <div
+                id="front-action-zone"
+                class="p-5 bg-white border-t border-slate-100 hidden"
+              >
+                <!-- Dynamic Risk Message -->
+                <div
+                  id="risk-msg"
+                  class="bg-red-50 p-3 rounded-lg border border-red-100 mb-3 flex items-start gap-3 hidden"
+                >
+                  <i
+                    class="fa-solid fa-triangle-exclamation text-red-500 mt-1"
+                  ></i>
+                  <div>
+                    <span class="block text-xs font-bold text-red-500 uppercase"
+                      >Retard Critique</span
+                    >
+                    <span class="text-sm text-slate-700" id="card-risk-txt"
+                      >Risque de légionellose.</span
+                    >
+                  </div>
+                </div>
+
+                <button
+                  onclick="flipCard()"
+                  class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-slate-900/20 active:scale-95 transition-transform flex justify-between items-center px-6"
+                >
+                  <span>Voir le tuto</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- BACK: THE TUTORIAL -->
+            <div class="card-face card-back flex flex-col">
+              <div
+                class="p-5 border-b border-slate-200 bg-white flex justify-between items-center sticky top-0 z-10"
+              >
+                <div>
+                  <h3 class="font-bold text-slate-900 text-lg">
+                    Méthode Express
+                  </h3>
+                  <div
+                    class="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded inline-block"
+                    id="back-time"
+                  >
+                    10 min
+                  </div>
+                </div>
+                <button
+                  onclick="flipCard()"
+                  class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"
+                >
+                  <i class="fa-solid fa-rotate-left"></i>
+                </button>
+              </div>
+
+              <!-- Scrollable Content -->
+              <div class="flex-1 overflow-y-auto p-5 space-y-6">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">
+                    Ingrédients
+                  </h4>
+                  <div class="flex flex-wrap gap-2" id="card-products">
+                    <!-- Ingredients populated by JS -->
+                  </div>
+                </div>
+                <div class="relative pl-2">
+                  <div class="step-line"></div>
+                  <div id="card-steps" class="space-y-6">
+                    <!-- Steps populated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer Actions -->
+              <div
+                class="p-5 bg-white border-t border-slate-200 flex gap-3 z-10"
+              >
+                <button
+                  onclick="confirmTask('later')"
+                  class="flex-1 py-3 bg-white border border-slate-300 text-slate-700 rounded-xl font-bold text-sm"
+                >
+                  Ajouter au planning
+                </button>
+                <button
+                  onclick="confirmTask('now')"
+                  class="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/20"
+                >
+                  Fait maintenant !
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- === STEP 3: DASHBOARD (TIME BUDGET) === -->
+      <div
+        id="view-dashboard"
+        class="absolute inset-0 z-30 bg-slate-50 hidden flex flex-col"
+      >
+        <div
+          class="px-6 py-8 bg-slate-900 text-white rounded-b-3xl shadow-xl z-10"
+        >
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h2 class="font-heading font-bold text-2xl">Bilan Temporel</h2>
+              <p class="text-slate-400 text-sm">Votre dette technique.</p>
+            </div>
+            <div
+              class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center"
+            >
+              <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+          </div>
+
+          <div class="flex items-end gap-2">
+            <span
+              class="text-5xl font-heading font-bold text-white"
+              id="total-time"
+              >0h00</span
+            >
+            <span class="text-sm text-slate-400 mb-2 font-medium"
+              >de maintenance requise</span
+            >
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-6 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              id="health-bar"
+              class="h-full bg-emerald-500 w-full transition-all duration-1000"
+            ></div>
+          </div>
+          <div
+            class="mt-2 flex justify-between text-xs font-bold uppercase tracking-wider"
+          >
+            <span class="text-emerald-400">Maison Saine</span>
+            <span class="text-red-400">Risque Critique</span>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 -mt-4 pt-8">
+          <!-- Urgent Tasks (Hidden if empty) -->
+          <div id="urgent-section" class="hidden">
+            <h3 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-fire text-red-500"></i> Priorité Haute (En
+              retard)
+            </h3>
+            <div id="urgent-list" class="space-y-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Upcoming Tasks -->
+          <div>
+            <h3
+              class="font-bold text-slate-900 mb-3 text-sm uppercase text-slate-400"
+            >
+              À venir
+            </h3>
+            <div id="upcoming-list" class="space-y-3">
+              <!-- Populated by JS -->
+              <div class="text-center text-slate-400 text-sm italic py-4">
+                Rien à signaler.
+              </div>
+            </div>
+          </div>
+
+          <button
+            id="btn-reload"
+            onclick="location.reload()"
+            class="w-full py-4 text-slate-400 font-bold text-sm"
+          >
+            Refaire le diagnostic
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Logic Module -->
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
