@@ -5,15 +5,22 @@
  * by a JSON fetch or an i18n (internationalization) system.
  */
 
+/**
+ * MAISON VITAL DATABASE
+ * Base conservée, enrichie avec les données "Impact Financier"
+ */
+
 export const INVENTORY_DATA = [
   {
     id: 1,
     name: "Pommeau Douche",
     icon: "fa-shower",
-    freq: 3, // Frequency in months
-    duration: 10, // Duration in minutes
+    freq: 3,
+    duration: 10,
     risk: "Légionelles & Perte débit",
     cost: 45,
+    // 👇 NOUVEAU : Donnée silencieuse pour le calcul d'impact
+    financialRisk: 150, // Coût estimé si négligé (plombier/santé)
     products: ["Vinaigre Blanc", "Sac Congélation"],
     steps: [
       "Verser vinaigre blanc dans un sac.",
@@ -30,6 +37,7 @@ export const INVENTORY_DATA = [
     duration: 5,
     risk: "Panne Résistance",
     cost: 450,
+    financialRisk: 600, // Remplacement machine
     products: ["Vinaigre Blanc"],
     steps: [
       "Verser 1L de vinaigre dans le tambour.",
@@ -46,6 +54,7 @@ export const INVENTORY_DATA = [
     duration: 15,
     risk: "Incendie (Graisse)",
     cost: 200,
+    financialRisk: 5000, // Franchise assurance ou dégâts cuisine
     products: ["Eau Bouillante", "Cristaux Soude"],
     steps: [
       "Démonter les grilles métalliques.",
@@ -62,6 +71,7 @@ export const INVENTORY_DATA = [
     duration: 60,
     risk: "Surconsommation (+20%)",
     cost: 800,
+    financialRisk: 300, // Perte sèche annuelle en électricité
     products: ["Pro Certifié"],
     steps: [
       "Actionner le groupe de sécurité (bouton rouge).",
@@ -77,6 +87,7 @@ export const INVENTORY_DATA = [
     duration: 20,
     risk: "Moisissures & Air Pollué",
     cost: 300,
+    financialRisk: 1500, // Traitement murs moisis
     products: ["Chiffon Humide", "Escabeau"],
     steps: [
       "Démonter les bouches d'extraction.",
